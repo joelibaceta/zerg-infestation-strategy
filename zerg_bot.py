@@ -7,11 +7,8 @@ import random
 
 class ZergInfestationStrategyBot(sc2.BotAI):
     def __init__(self):
-        self.drone_counter = 0
         self.extractor_started = False
         self.spawning_pool_started = False
-        self.moved_workers_to_gas = False
-        self.moved_workers_from_gas = False
         self.queeen_started = False
         self.mboost_started = False
 
@@ -36,7 +33,6 @@ class ZergInfestationStrategyBot(sc2.BotAI):
         await self.distribute_workers()
         if self.hq.assigned_harvesters < self.hq.ideal_harvesters:
             if self.can_afford(DRONE) and self.larvae.amount > 0:
-                self.drone_counter += 1
                 await self.do(self.larvae.random.train(DRONE))
 
         if not self.extractor_started:
