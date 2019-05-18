@@ -4,7 +4,6 @@ from sc2.constants import HATCHERY, SPAWNINGPOOL, EXTRACTOR, LAIR
 from sc2.constants import RESEARCH_ZERGLINGMETABOLICBOOST, EFFECT_INJECTLARVA, AbilityId
 
 import random
-from utils import *
 
 class ZergInfestationStrategyBot(sc2.BotAI):
     def __init__(self):
@@ -117,7 +116,6 @@ class ZergInfestationStrategyBot(sc2.BotAI):
         scout_locations = [location for location in self.expansion_locations if
                            location not in self.enemy_start_locations]
         if self.minerals > 400 and self.workers.exists:
-            #pos = get_closest_expansion_location(scout_locations, self.start_location)
             pos = random.choice(scout_locations)
             if await self.can_place(HATCHERY, pos):
                 self.spawning_pool_started = True

@@ -1,11 +1,8 @@
-import random
-
 import sc2
 from sc2 import Race, Difficulty
 from sc2.player import Bot, Computer
 
 from zerg_bot import ZergInfestationStrategyBot
-
 
 def main():
     sc2.run_game(sc2.maps.get("AutomatonLE"), [
