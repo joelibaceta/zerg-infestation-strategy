@@ -7,9 +7,10 @@ import random
 
 class ZergInfestationStrategyBot(sc2.BotAI):
     def __init__(self):
-        self.extractor_started = False
+        self.extractors = 0
+        self.hatcheries_counter = 0
         self.spawning_pool_started = False
-        self.queeen_started = False
+        self.queen_counter = 0
         self.mboost_started = False
 
 
@@ -35,13 +36,20 @@ class ZergInfestationStrategyBot(sc2.BotAI):
             if self.can_afford(DRONE) and self.larvae.amount > 0:
                 await self.do(self.larvae.random.train(DRONE))
 
-        if not self.extractor_started:
+        if self.extractors == 0:
+            drone = self.workers.random
+            target = self.state.vespene_geyser.closest_to(drone.position)
+            err = await self.do(drone.build(EXTRACTOR, target))
+            if not err:
+                self.extractors += 1
+
+        if self.extractors < self.units(HATCHERY).amount and self.units(LAIR).ready.exists:
             if self.can_afford(EXTRACTOR) and self.workers.exists:
                 drone = self.workers.random
                 target = self.state.vespene_geyser.closest_to(drone.position)
                 err = await self.do(drone.build(EXTRACTOR, target))
                 if not err:
-                    self.extractor_started = True
+                    self.extractors += 1
 
 
     async def explore_the_map(self):
@@ -95,7 +103,7 @@ class ZergInfestationStrategyBot(sc2.BotAI):
     async def try_to_build_hydralisks_quickly(self):
 
         if self.units(SPAWNINGPOOL).ready.exists:
-            if not self.units(LAIR).exists:
+            if not (self.units(LAIR).amount > 0):
                 if self.can_afford(LAIR):
                     await self.do(self.townhalls.first.build(LAIR))
 
@@ -124,8 +132,7 @@ class ZergInfestationStrategyBot(sc2.BotAI):
             if AbilityId.EFFECT_INJECTLARVA in abilities:
                 await self.do(queen(EFFECT_INJECTLARVA, self.hq))
 
-
-        if not self.queeen_started and self.units(SPAWNINGPOOL).ready.exists:
+        if self.queen_counter < self.units(HATCHERY).amount and self.units(SPAWNINGPOOL).ready.exists:
             if self.can_afford(QUEEN):
                 r = await self.do(self.hq.train(QUEEN))
                 if not r:
