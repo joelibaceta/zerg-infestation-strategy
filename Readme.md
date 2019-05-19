@@ -89,5 +89,3 @@ Adicionalmente se valida si el contador de extractores es 0 para construir el pr
 
 Se controla que el numero de extractores sea unicamente 1 por base.
 
-
-#### Construir y distribuir trabajadores
