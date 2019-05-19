@@ -45,6 +45,10 @@ class ZergInfestationStrategyBot(sc2.BotAI):
         # Ejecutar acciones en cada iteracion
 ```
 
+#### Construir y distribuir trabajadores
+
+![build-and-work](/images/BuildAndWork.png)
+
 Por ejemplo para construir y distribuir en posiciones de trabajo los Drones usamos el siguiente snippet
 
 ```python
@@ -84,3 +88,6 @@ Aqui le decimos al Bot que empiece distribuyendo los trabajadores, posteriorment
 Adicionalmente se valida si el contador de extractores es 0 para construir el primero lo mas rapido posible y los siguientes poco antes de poder construir Hidraliscos para no penalizar los recursos tan pronto.
 
 Se controla que el numero de extractores sea unicamente 1 por base.
+
+
+#### Construir y distribuir trabajadores
