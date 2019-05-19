@@ -93,6 +93,8 @@ class ZergInfestationStrategyBot(sc2.BotAI):
                 await self.do(unit.attack(target))
 
     async def research_zergling_metabolic_boost_when_possible(self):
+        """Investigar y mejorar Zerglings con Metabolic Boost cuando sea posible"""
+
         if self.vespene >= 100:
             sp = self.units(SPAWNINGPOOL).ready
             if sp.exists and self.minerals >= 100 and not self.mboost_started:
@@ -100,11 +102,15 @@ class ZergInfestationStrategyBot(sc2.BotAI):
                 self.mboost_started = True
 
     async def build_supply_when_necessary(self):
+        """Construir Overlords cuando sea necesario"""
+
         if self.supply_left < 2:
             if self.can_afford(OVERLORD) and self.larvae.exists:
                 await self.do(self.larvae.random.train(OVERLORD))
 
     async def try_to_build_zerglings_quickly(self):
+        """Tratar de construir un SpawningPool lo mas rapido posible para producir Zerglings"""
+
         if not self.spawning_pool_started:
             if self.can_afford(SPAWNINGPOOL) and self.workers.exists:
                 for d in range(4, 15):
@@ -122,6 +128,7 @@ class ZergInfestationStrategyBot(sc2.BotAI):
 
 
     async def try_to_build_hydralisks_quickly(self):
+        """Evolucionar Hatchery, construir un Hydralisken para producir Hidraliscos rapidamente"""
 
         if self.units(SPAWNINGPOOL).ready.exists:
             if not (self.units(LAIR).amount > 0):
@@ -138,6 +145,8 @@ class ZergInfestationStrategyBot(sc2.BotAI):
                 await self.do(self.larvae.random.train(HYDRALISK))
 
     async def build_an_expansion(self):
+        """Construir expansiones en los lugares mas adecuados de forma aleatoria"""
+
         scout_locations = [location for location in self.expansion_locations if
                            location not in self.enemy_start_locations]
         if self.minerals > 400 and self.workers.exists:
@@ -148,6 +157,8 @@ class ZergInfestationStrategyBot(sc2.BotAI):
 
 
     async def build_queens_continously(self):
+        """Construir Queens para mantener un volumen frecuente de larvas """
+
         for queen in self.units(QUEEN).idle:
             abilities = await self.get_available_abilities(queen)
             if AbilityId.EFFECT_INJECTLARVA in abilities:
