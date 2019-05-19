@@ -45,7 +45,7 @@ class ZergInfestationStrategyBot(sc2.BotAI):
         # Ejecutar acciones en cada iteracion
 ```
 
-#### Construir y distribuir trabajadores
+### Construir, distribuir trabajadores y producir recursos
 
 ![build-and-work](/images/BuildAndWork.png)
 
