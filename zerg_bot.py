@@ -1,23 +1,30 @@
 import sc2
+import random
 from sc2.constants import LARVA, ZERGLING, QUEEN, OVERLORD, DRONE, HYDRALISK, HYDRALISKDEN
 from sc2.constants import HATCHERY, SPAWNINGPOOL, EXTRACTOR, LAIR
 from sc2.constants import RESEARCH_ZERGLINGMETABOLICBOOST, EFFECT_INJECTLARVA, AbilityId
 
-import random
-
 class ZergInfestationStrategyBot(sc2.BotAI):
     def __init__(self):
+        """Inicializa variables de control de flujo
+
+        extractors: Contador de gaysers de vespeno para tener 1 por hatchery
+        spawning_pool_started: Flag que permite validar que ya se creo un spawning pool
+        queen_counter: Contador de Queens para tener 1 por hatchery
+        mboost_started: Flag que permite validar el desarrollo de habilidad metabolic_bost para Zerglings
+
+        """
         self.extractors = 0
-        self.hatcheries_counter = 0
         self.spawning_pool_started = False
         self.queen_counter = 0
         self.mboost_started = False
 
 
     async def on_step(self, iteration):
+        """Ciclo infinito del juego"""
 
-        self.hq = self.townhalls.random
-        self.larvae = self.units(LARVA)
+        self.hq = self.townhalls.random # Elegir un ayuntamiento ( Hatchery, Lair, Hive ) aleatorio en cada paso.
+        self.larvae = self.units(LARVA) # Lista de larvas disponibles
 
         await self.build_and_distribute_workers()
         await self.explore_the_map()
@@ -31,6 +38,8 @@ class ZergInfestationStrategyBot(sc2.BotAI):
 
 
     async def build_and_distribute_workers(self):
+        """Construir la cantidad de obreros ideal y distributir trabajadores automaticamente"""
+
         await self.distribute_workers()
         if self.hq.assigned_harvesters < self.hq.ideal_harvesters:
             if self.can_afford(DRONE) and self.larvae.amount > 0:
@@ -53,6 +62,8 @@ class ZergInfestationStrategyBot(sc2.BotAI):
 
 
     async def explore_the_map(self):
+        """Mantener Overlords explorando el mapa continuamente de base en base"""
+
         scout_locations = [location for location in self.expansion_locations if
                            location not in self.enemy_start_locations]
 
@@ -60,6 +71,16 @@ class ZergInfestationStrategyBot(sc2.BotAI):
             await self.do(overlord.move(random.choice(scout_locations)))
 
     async def launch_attack_if_we_are_ready(self):
+        """Esperar para lanzar un ataque cuando se cuenten con las unidades necesarias
+
+        Usar 2 estrategias distintas de ataques:
+        - Enviar todas las unidades en espera cuando ya se cuente con 10 Hidraliscos.
+        - Enviar 50 Zerglins disponibles.
+
+        Cada ataque se envia hacia alguna estructura enemiga conocida aleatoria
+        o en su defecto a la posicion inicial del enemigo.
+        """
+
         forces = self.units(ZERGLING) | self.units(HYDRALISK)
         target = self.known_enemy_structures.random_or(self.enemy_start_locations[0]).position
 
